@@ -1,0 +1,278 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>fr.bl.esb</groupId>
+    <artifactId>demat</artifactId>
+    <packaging>mule</packaging>
+    <name>Mule Demat Application</name>
+    <version>1.0-SNAPSHOT</version>
+    <description>dematérialisation de document administratif</description>
+
+    <parent>
+	    <groupId>fr.bl.esb.domain</groupId>
+	    <artifactId>demat-mule-project</artifactId>
+	    <version>1.0-SNAPSHOT</version>
+    </parent>
+
+    <properties>
+         <!-- private properties -->
+    </properties>
+
+
+   <repositories>
+        <repository>
+            <id>central</id>
+            <url>http://repo1.maven.org/maven2/</url>
+        </repository>
+    </repositories>
+<!--
+    <pluginRepositories>
+        <pluginRepository>
+         
+        </pluginRepository>
+    </pluginRepositories>
+-->
+  <!-- Here comes modules dependencies -->
+    <dependencies>
+       <dependency>
+            <groupId>fr.bl.esb.domain</groupId>
+            <artifactId>demat-mule-util</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>fr.bl.esb.domain</groupId>
+            <artifactId>demat-mule-module</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+    </dependencies>
+
+<build>
+        <defaultGoal>install</defaultGoal>
+        <finalName>${project.name}-${project.version}</finalName>
+        <resources>
+            <resource>
+                <directory>src/main/app</directory>
+                <filtering>true</filtering>
+                <includes>
+                    <include>mule-config.xml</include>
+                </includes>
+            </resource>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+                <includes>
+                    <include>*.xml</include>
+                    <include>log4j.properties</include>
+                </includes>
+            </resource>
+        </resources>
+
+        <testResources>
+            <testResource>
+                <directory>src/test/app</directory>
+                <filtering>true</filtering>
+                <includes>
+                    <include>mule-test-config.xml</include>
+                </includes>
+            </testResource>
+            <testResource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+                <includes>
+                    <include>*.xml</include>
+                </includes>
+                <excludes>
+                    <exclude>spring-config.xml</exclude>
+                </excludes>
+            </testResource>
+            <testResource>
+                <directory>src/test/resources</directory>
+                <filtering>true</filtering>
+                <includes>
+                    <include>*</include>
+                </includes>
+            </testResource>
+        </testResources>
+
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>2.7</version>
+                <executions>
+                    <execution>
+                        <id>unpack</id>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>unpack</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                               <artifactItem>
+                                    <groupId>fr.bl.esb.domain</groupId>
+                                    <artifactId>demat-mule-module</artifactId>
+                                    <version>${project.version}</version>
+                                    <type>jar</type>
+                                    <overWrite>false</overWrite>
+                                    <outputDirectory>${project.build.directory}/classes/module</outputDirectory>
+                                    <includes>**/*.xslt,**/*.xml</includes>
+                                </artifactItem>
+                            </artifactItems>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-release-plugin</artifactId>
+                <version>2.3.2</version>
+                <configuration>
+                    <tagBase>http://172.25.3.34/svn/domaine-crm-web/projets-mule-esb/marketplace-project/src/tags</tagBase>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>2.3.2</version>
+                <configuration>
+                    <source>${jdk.version}</source>
+                    <target>${jdk.version}</target>
+                    <encoding>${project.build.sourceEncoding}</encoding>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.mule.tools</groupId>
+                <artifactId>maven-mule-plugin</artifactId>
+                <version>1.9</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <copyToAppsDirectory>true</copyToAppsDirectory>
+                    <archiveClasses>false</archiveClasses>
+                    <inclusions>
+                        <inclusion>
+                            <groupId>org.mule.modules</groupId>
+                            <artifactId>mule-module-objectstore</artifactId>
+                        </inclusion>
+                    </inclusions>
+                </configuration>
+            </plugin>
+
+           
+        </plugins>
+        <pluginManagement>
+            <plugins>
+                <!--This plugin's configuration is used to store Eclipse m2e settings
+                    only. It has no influence on the Maven build itself. -->
+                <plugin>
+                    <groupId>org.eclipse.m2e</groupId>
+                    <artifactId>lifecycle-mapping</artifactId>
+                    <version>1.0.0</version>
+                    <configuration>
+                        <lifecycleMappingMetadata>
+                            <pluginExecutions>
+                                <pluginExecution>
+                                    <pluginExecutionFilter>
+                                        <groupId>
+                                            org.mule.tools
+                                        </groupId>
+                                        <artifactId>
+                                            maven-mule-plugin
+                                        </artifactId>
+                                        <versionRange>
+                                            [1.6,)
+                                        </versionRange>
+                                        <goals>
+                                            <goal>
+                                                attach-test-resources
+                                            </goal>
+                                        </goals>
+                                    </pluginExecutionFilter>
+                                    <action>
+                                        <ignore />
+                                    </action>
+                                </pluginExecution>
+                            </pluginExecutions>
+                        </lifecycleMappingMetadata>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+
+    </build>
+
+    <!-- plugins for creating site reports -->
+    <reporting>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <configuration>
+                    <source>${jdk.version}</source>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-report-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <configuration>
+                    <configLocation>http://mulesoft.org/download/attachments/92/checkstyle.xml?version=1
+                    </configLocation>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-pmd-plugin</artifactId>
+                <configuration>
+                    <targetJdk>${jdk.version}</targetJdk>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>cobertura-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>taglist-maven-plugin</artifactId>
+                <configuration>
+                    <tags>
+                        <tag>TODO</tag>
+                        <tag>@todo</tag>
+                        <tag>FIXME</tag>
+                        <tag>@fixme</tag>
+                        <tag>@deprecated</tag>
+                    </tags>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jxr-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <configuration>
+                    <links>
+                        <link>http://java.sun.com/j2ee/1.4/docs/api</link>
+                        <link>http://java.sun.com/j2se/1.4.2/docs/api</link>
+                        <link>http://java.sun.com/j2se/1.5.0/docs/api</link>
+                    </links>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>jdepend-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>findbugs-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </reporting>
+
+</project>
